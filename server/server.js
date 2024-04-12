@@ -20,21 +20,16 @@ app.post('/', (req, res) => {
   }
 
   try {
-    // Write the received code to a file
-    writeFile('code.js', code);
-    
 
+    writeFile('./js/code.js', code);
 
-    exec('docker build -t code-execution-container .', (error, stdout, stderr) => {
+    exec('docker build -t code-execution-container -f ./js/Dockerfile .', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return res.status(500).send('Error executing code hh');
       }
         
-      
-      // console.log(`Docker build stdout: ${stdout}`);
-
-      //   // Run the Docker container
+    
       exec('docker run --rm code-execution-container', (error, stdout, stderr) => {
         if (error) {
           console.error(`Docker run error: ${error.message}`);
@@ -44,16 +39,14 @@ app.post('/', (req, res) => {
           console.error(`Docker run stderr: ${stderr}`);
           return res.status(500).send('Error running Docker container');
         }
-        
-        // console.log(`Docker run stdout: ${stdout}`);
+  
         
         res.send(stdout);
       });
     });
 
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    // res.status(500).send('Error executing code');
+    res.status(500).send('Error executing code');
   }
 });
 
