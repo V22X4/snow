@@ -2,6 +2,6 @@ FROM node:14
 
 WORKDIR /app
 
-COPY  ./js/code.js .
+COPY  ./execute/js/code.js .
 
 CMD ["node", "code.js"]

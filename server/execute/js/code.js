@@ -1,0 +1,1 @@
+var a = 0; var b = 588; console.log(a + b + 5888)
