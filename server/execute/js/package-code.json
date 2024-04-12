@@ -1,0 +1,15 @@
+
+{
+  "name": "express-app",
+  "version": "1.0.0",
+  "description": "A simple Express application",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

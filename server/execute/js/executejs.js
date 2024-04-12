@@ -1,10 +1,13 @@
 import { writeFile } from 'fs/promises';
 import { exec } from 'child_process';
+import CreatePackageJson from './CreatePackageJson.js';
 
-const executejs = (req, res) => {
+
+const executejs = async (req, res) => {
 
 
   const { code } = req.body;
+
 
 
     if (!code) {
@@ -14,29 +17,28 @@ const executejs = (req, res) => {
   try {
       
       const absPath = './execute/js'
-      writeFile(`${absPath}/code.js`, code);
+      await Promise.all([writeFile(`${absPath}/code.js`, code), CreatePackageJson(code)]);
       
     
-        exec(`docker build -t js-code-execution-container -f ${absPath}/Dockerfile .`, (error, stdout, stderr) => {
+      await exec(`docker build -t js-code-execution-container -f ${absPath}/Dockerfile .`, (error, stdout, stderr) => {
           if (error) {
             console.error(`Error: ${error.message}`);
             return res.status(500).send('Error executing code hh');
           }
-            
+        });
         
-          exec('docker run --rm js-code-execution-container', (error, stdout, stderr) => {
-            if (error) {
-              console.error(`Docker run error: ${error.message}`);
-              return res.status(500).send('Error running Docker container');
-            }
-            else if (stderr) {
-              console.error(`Docker run stderr: ${stderr}`);
-              return res.status(500).send('Error running Docker container');
-            }
-      
+        
+      await exec('docker run --rm js-code-execution-container', (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Docker run error: ${error.message}`);
+            return res.status(500).send('Error running Docker container');
+          }
+          else if (stderr) {
+            console.error(`Docker run stderr: ${stderr}`);
+            return res.status(500).send('Error running Docker container');
+          }
             
-            res.send(stdout);
-          });
+          res.send(stdout);
         });
     
     } catch (error) {
