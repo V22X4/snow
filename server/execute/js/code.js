@@ -1,0 +1,1 @@
+import cors from 'cors'; console.log(1 + 6, 'thala for a reason')
