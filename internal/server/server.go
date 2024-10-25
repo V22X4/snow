@@ -26,9 +26,14 @@ type ExecuteResponse struct {
 }
 
 func New() *Server {
+    executor, err := executor.New()
+    if err != nil {
+        log.Fatalf("failed to create executor: %v", err)
+    }
+
     return &Server{
-        executor: executor.New(),
-        limiter:  limiter.New(10, 60), // 10 requests per minute
+        executor: executor,
+        limiter:  limiter.New(10, 60),
     }
 }
 
